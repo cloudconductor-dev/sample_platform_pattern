@@ -182,96 +182,6 @@
         ]
       }
     },
-    "APServer" : {
-      "Type" : "AWS::EC2::Instance",
-      "DependsOn" : "WebWaitCondition",
-      "Metadata" : {
-        "Role" : "ap"
-      },
-      "Properties" : {
-        "ImageId" : { "Ref" : "apImageId" },
-        "InstanceType" : { "Ref" : "apInstanceType" },
-        "KeyName" : { "Ref" : "KeyName" },
-        "NetworkInterfaces" : [{
-           "DeviceIndex" : "0",
-           "AssociatePublicIpAddress" : true,
-           "SubnetId" : { "Ref" : "Subnet" },
-           "GroupSet" : [{"Ref": "SharedSecurityGroup"}, {"Ref": "APSecurityGroup"}]
-        }],
-        "UserData" : { "Fn::Base64" : { "Fn::Join" : ["", [
-          "#!/bin/sh -v\n",
-          "# Helper function\n",
-          "function error_exit\n",
-          "{\n",
-          "  /opt/aws/bin/cfn-signal -e 1 -r \"$1\" '", { "Ref" : "APWaitHandle" }, "'\n",
-          "  exit 1\n",
-          "}\n",
-          "# Set Parameters\n",
-          "/bin/echo 'ROLE=ap' > /opt/cloudconductor/config\n",
-          "/bin/echo 'SERF_JOIN_ADDRESS=", {"Fn::GetAtt": ["WebNetworkInterface", "PrimaryPrivateIpAddress"]}, "' >> /opt/cloudconductor/config\n",
-          "# Run Serf\n",
-          "/etc/init.d/serf restart || error_exit 'Failed to start serf agent'\n",
-          "# Send success signal\n",
-          "/opt/aws/bin/cfn-signal -e 0 -r 'APServer Setup complete' '", { "Ref" : "APWaitHandle" }, "'\n"
-        ]]}},
-        "Tags" : [{"Key": "Name", "Value": "APServer"}, {"Key": "Role", "Value": "ap"}]
-      }
-    },
-    "APSecurityGroup" : {
-      "Type" : "AWS::EC2::SecurityGroup",
-      "Properties" : {
-        "GroupDescription" : "Enable SSH access and HTTP access via port 8080",
-        "VpcId" : { "Ref" : "VPC" },
-        "SecurityGroupIngress" : [
-          {"IpProtocol" : "tcp", "FromPort" : "8080", "ToPort" : "8080", "SourceSecurityGroupId" : {"Ref": "WebSecurityGroup"}}
-        ]
-      }
-    },
-    "DBServer" : {
-      "Type" : "AWS::EC2::Instance",
-      "DependsOn" : "WebWaitCondition",
-      "Metadata" : {
-        "Role" : "db"
-      },
-      "Properties" : {
-        "ImageId" : { "Ref" : "dbImageId" },
-        "InstanceType" : { "Ref" : "dbInstanceType" },
-        "KeyName" : { "Ref" : "KeyName" },
-        "NetworkInterfaces" : [{
-           "DeviceIndex" : "0",
-           "AssociatePublicIpAddress" : true,
-           "SubnetId" : { "Ref" : "Subnet" },
-           "GroupSet" : [{"Ref": "SharedSecurityGroup"}, {"Ref": "DBSecurityGroup"}]
-        }],
-        "UserData" : { "Fn::Base64" : { "Fn::Join" : ["", [
-          "#!/bin/sh -v\n",
-          "# Helper function\n",
-          "function error_exit\n",
-          "{\n",
-          "  /opt/aws/bin/cfn-signal -e 1 -r \"$1\" '", { "Ref" : "DBWaitHandle" }, "'\n",
-          "  exit 1\n",
-          "}\n",
-          "# Set Parameters\n",
-          "/bin/echo 'ROLE=db' > /opt/cloudconductor/config\n",
-          "/bin/echo 'SERF_JOIN_ADDRESS=", {"Fn::GetAtt": ["WebNetworkInterface", "PrimaryPrivateIpAddress"]}, "' >> /opt/cloudconductor/config\n",
-          "# Run Serf\n",
-          "/etc/init.d/serf restart || error_exit 'Failed to start serf agent'\n",
-          "# Send success signal\n",
-          "/opt/aws/bin/cfn-signal -e 0 -r 'DBServer Setup complete' '", { "Ref" : "DBWaitHandle" }, "'\n"
-        ]]}},
-        "Tags" : [{"Key": "Name", "Value": "DBServer"}, {"Key": "Role", "Value": "db"}]
-      }
-    },
-    "DBSecurityGroup" : {
-      "Type" : "AWS::EC2::SecurityGroup",
-      "Properties" : {
-        "GroupDescription" : "Enable SSH access and DB access via port 3306",
-        "VpcId" : { "Ref" : "VPC" },
-        "SecurityGroupIngress" : [
-          {"IpProtocol" : "tcp", "FromPort" : "3306", "ToPort" : "3306", "SourceSecurityGroupId" : {"Ref": "APSecurityGroup"}}
-        ]
-      }
-    },
     "WebWaitHandle" : {
       "Type" : "AWS::CloudFormation::WaitConditionHandle"
     },
@@ -280,28 +190,6 @@
       "DependsOn" : "WebServer",
       "Properties" : {
         "Handle" : { "Ref" : "WebWaitHandle" },
-        "Timeout" : "600"
-      }
-    },
-    "APWaitHandle" : {
-      "Type" : "AWS::CloudFormation::WaitConditionHandle"
-    },
-    "APWaitCondition" : {
-      "Type" : "AWS::CloudFormation::WaitCondition",
-      "DependsOn" : "APServer",
-      "Properties" : {
-        "Handle" : { "Ref" : "APWaitHandle" },
-        "Timeout" : "600"
-      }
-    },
-    "DBWaitHandle" : {
-      "Type" : "AWS::CloudFormation::WaitConditionHandle"
-    },
-    "DBWaitCondition" : {
-      "Type" : "AWS::CloudFormation::WaitCondition",
-      "DependsOn" : "DBServer",
-      "Properties" : {
-        "Handle" : { "Ref" : "DBWaitHandle" },
         "Timeout" : "600"
       }
     }
