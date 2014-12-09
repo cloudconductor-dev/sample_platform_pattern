@@ -1,10 +1,10 @@
-name:             "rails_pattern"
-maintainer:       "TIS Inc."
-maintainer_email: "ccndctr@gmail.com"
+name:             "platform_pattern"
+maintainer:       ""
+maintainer_email: ""
 license:          "Apache v2.0"
 description:      "CloudConductor platform pattern for Rails application"
 version:          "0.0.1"
-url:              "https://github.com/cloudconductor-patterns/rails_pattern"
+url:              "https://github.com/KondaTomoyuki/pattern.git"
 
 type:      "platform"
 depends:   []

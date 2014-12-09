@@ -25,26 +25,8 @@
       "Type" : "String",
       "Default" : "t2.small"
     },
-    "apInstanceType" : {
-      "Description" : "APServer instance type",
-      "Type" : "String",
-      "Default" : "t2.small"
-    },
-    "dbInstanceType" : {
-      "Description" : "DBServer instance type",
-      "Type" : "String",
-      "Default" : "t2.small"
-    },
     "webImageId" : {
       "Description" : "[computed] WebServer Image Id. This parameter is automatically filled by CloudConductor.",
-      "Type" : "String"
-    },
-    "apImageId" : {
-      "Description" : "[computed] APServer Image Id. This parameter is automatically filled by CloudConductor.",
-      "Type" : "String"
-    },
-    "dbImageId" : {
-      "Description" : "[computed] DBServer Image Id. This parameter is automatically filled by CloudConductor.",
       "Type" : "String"
     },
     "CloudConductorLocation" : {
