@@ -2,9 +2,9 @@ name:             "platform_pattern"
 maintainer:       ""
 maintainer_email: ""
 license:          "Apache v2.0"
-description:      "CloudConductor platform pattern for Rails application"
+description:      "CloudConductor sample platform pattern"
 version:          "0.0.1"
-url:              "https://github.com/KondaTomoyuki/pattern.git"
+url:              "https://github.com/cloudconductor-dev/sample_platform_pattern"
 
 type:      "platform"
 depends:   []
